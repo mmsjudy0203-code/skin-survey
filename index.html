@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>피부타입별 맞춤 시술 설문조사</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .question:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .option {
+            position: relative;
+        }
+        
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .option label {
+            display: block;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            color: #495057;
+        }
+        
+        .option label:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+        
+        .option input:checked + label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .multiple-select {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            display: none;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .recommendation {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .recommendation h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .recommendation ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .recommendation li {
+            padding: 5px 0;
+            color: #555;
+        }
+        
+        .recommendation li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .question-title {
+                font-size: 16px;
+            }
+            
+            .option label {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>피부타입별 맞춤 시술 설문조사</h1>
+            <p>고객님의 피부 상태를 정확히 파악하여<br>최적의 시술과 관리법을 제안해드립니다</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="skinSurvey">
+                <div class="question">
+                    <div class="question-title">
+                        <span class="question-number">1</span>
+                        평소 느끼시는 피부 타입은 무엇인가요?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" id="skin_type_1" name="skin_type" value="지성">
+                            <label for="skin_type_1">지성</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="skin_type_2" name="skin_type" value="건성">
+                            <label for="skin_type_2">건성</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="skin_type_3" name="skin_type" value="복합성">
+                            <label for="skin_type_3">복합성</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="skin_type_4" name="skin_type" value="민감성">
+                            <label for="skin_type_4">민감성</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="skin_type_5" name="skin_type" value="기타">
+                            <label for="skin_type_5">기타(직접입력)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-title">
+                        <span class="question-number">2</span>
+                        피부 고민 중 가장 신경 쓰이는 부분은 무엇인가요?
+                    </div>
+                    <div class="multiple-select">※ 복수 선택 가능</div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="concern_1" name="skin_concerns" value="여드름">
+                            <label for="concern_1">여드름</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="concern_2" name="skin_concerns" value="홍조">
+                            <label for="concern_2">홍조</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="concern_3" name="skin_concerns" value="잡티·색소침착">
+                            <label for="concern_3">잡티·색소침착</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="concern_4" name="skin_concerns" value="주름">
+                            <label for="concern_4">주름</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="concern_5" name="skin_concerns" value="탄력 저하">
+                            <label for="concern_5">탄력 저하</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="concern_6" name="skin_concerns" value="각질">
+                            <label for="concern_6">각질</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="concern_7" name="skin_concerns" value="건조함">
+                            <label for="concern_7">건조함</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="concern_8" name="skin_concerns" value="기타">
+                            <label for="concern_8">기타</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-title">
+                        <span class="question-number">3</span>
+                        피부가 특히 민감해지는 계절이나 상황이 있나요?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" id="season_1" name="sensitive_season" value="봄">
+                            <label for="season_1">봄</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="season_2" name="sensitive_season" value="여름">
+                            <label for="season_2">여름</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="season_3" name="sensitive_season" value="가을">
+                            <label for="season_3">가을</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="season_4" name="sensitive_season" value="겨울">
+                            <label for="season_4">겨울</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="season_5" name="sensitive_season" value="특정 상황">
+                            <label for="season_5">특정 상황(스트레스, 수면 부족 등)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-title">
+                        <span class="question-number">4</span>
+                        일상에서 피부 관리에 얼마나 시간을 투자하시나요?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" id="time_1" name="skincare_time" value="5분 이하">
+                            <label for="time_1">5분 이하</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="time_2" name="skincare_time" value="10분 내외">
+                            <label for="time_2">10분 내외</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="time_3" name="skincare_time" value="20분 이상">
+                            <label for="time_3">20분 이상</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-title">
+                        <span class="question-number">5</span>
+                        주로 사용하는 피부 관리법은 무엇인가요?
+                    </div>
+                    <div class="multiple-select">※ 복수 선택 가능</div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="checkbox" id="method_1" name="skincare_methods" value="클렌징">
+                            <label for="method_1">클렌징</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="method_2" name="skincare_methods" value="토너">
+                            <label for="method_2">토너</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="method_3" name="skincare_methods" value="에센스">
+                            <label for="method_3">에센스</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="method_4" name="skincare_methods" value="앰플">
+                            <label for="method_4">앰플</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="method_5" name="skincare_methods" value="마스크팩">
+                            <label for="method_5">마스크팩</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="method_6" name="skincare_methods" value="자외선 차단제">
+                            <label for="method_6">자외선 차단제</label>
+                        </div>
+                        <div class="option">
+                            <input type="checkbox" id="method_7" name="skincare_methods" value="병원 시술">
+                            <label for="method_7">병원 시술(레이저, 필링 등)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-title">
+                        <span class="question-number">6</span>
+                        피부 개선을 위해 집중하고 싶은 부분은 무엇인가요?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" id="focus_1" name="improvement_focus" value="수분 보충">
+                            <label for="focus_1">수분 보충</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="focus_2" name="improvement_focus" value="피지 조절">
+                            <label for="focus_2">피지 조절</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="focus_3" name="improvement_focus" value="탄력 강화">
+                            <label for="focus_3">탄력 강화</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="focus_4" name="improvement_focus" value="피부 진정">
+                            <label for="focus_4">피부 진정</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="focus_5" name="improvement_focus" value="색소 개선">
+                            <label for="focus_5">색소 개선</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="focus_6" name="improvement_focus" value="기타">
+                            <label for="focus_6">기타</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question">
+                    <div class="question-title">
+                        <span class="question-number">7</span>
+                        피부 관리 시 어려움을 느끼는 점이 있나요?
+                    </div>
+                    <div class="options">
+                        <div class="option">
+                            <input type="radio" id="difficulty_1" name="skincare_difficulty" value="제품 선택">
+                            <label for="difficulty_1">제품 선택</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="difficulty_2" name="skincare_difficulty" value="시간 부족">
+                            <label for="difficulty_2">시간 부족</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="difficulty_3" name="skincare_difficulty" value="지속성 부족">
+                            <label for="difficulty_3">지속성 부족</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="difficulty_4" name="skincare_difficulty" value="비용 부담">
+                            <label for="difficulty_4">비용 부담</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" id="difficulty_5" name="skincare_difficulty" value="기타">
+                            <label for="difficulty_5">기타</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">맞춤 시술 및 관리법 확인하기</button>
+            </form>
+
+            <div id="result" class="result">
+                <h3>🎯 고객님을 위한 맞춤 솔루션</h3>
+                <div id="recommendation-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const skinTypeRecommendations = {
+            '지성': {
+                title: '지성 피부 & 여드름 고민 고객',
+                treatments: ['딥 클렌징 레이저', '여드름 치료 프로그램'],
+                habits: [
+                    '자극이 적은 저자극 클렌저로 아침·저녁 세안하기',
+                    '유분 조절이 잘 되는 가벼운 수분 크림 사용하기',
+                    '피부에 손 대는 습관 줄이기',
+                    '하루 2리터 물 마시기'
+                ]
+            },
+            '건성': {
+                title: '건성 피부 & 각질, 건조함 고민 고객',
+                treatments: ['수분 공급 레이저 테라피', '보습 강화 필링 치료'],
+                habits: [
+                    '세안 후 3분 이내 보습 제품 바르기',
+                    '주 1~2회 보습 마스크팩 사용하기',
+                    '가습기 활용 및 실내 습도 유지하기',
+                    '뜨거운 물 피하고 미지근한 물 사용하기'
+                ]
+            },
+            '민감성': {
+                title: '민감성 피부 & 홍조 고민 고객',
+                treatments: ['진정·재생 레이저', '홍조 개선 치료'],
+                habits: [
+                    '자극 없는 저자극 제품 사용하기',
+                    '외출 시 자외선 차단제 꼭 바르기',
+                    '스트레스 관리 및 충분한 수면 취하기',
+                    '뜨거운 음식, 술, 매운 음식 피하기'
+                ]
+            },
+            '복합성': {
+                title: '복합성 피부 & 탄력 저하 고민 고객',
+                treatments: ['리프팅 레이저', '탄력 강화 프로그램'],
+                habits: [
+                    '아침·저녁 탄력 앰플 꾸준히 사용하기',
+                    '균형 잡힌 식단과 꾸준한 운동',
+                    '충분한 수분 섭취와 숙면',
+                    '자외선 차단제 매일 바르기'
+                ]
+            }
+        };
+
+        document.getElementById('skinSurvey').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const skinType = formData.get('skin_type');
+            
+            if (!skinType) {
+                alert('피부 타입을 선택해주세요.');
+                return;
+            }
+            
+            let recommendation = skinTypeRecommendations[skinType];
+            
+            // 기타 선택시 복합성으로 기본 설정
+            if (!recommendation) {
+                recommendation = skinTypeRecommendations['복합성'];
+            }
+            
+            const resultContent = `
+                <div class="recommendation">
+                    <h4>🏥 추천 시술</h4>
+                    <ul>
+                        ${recommendation.treatments.map(treatment => `<li>${treatment}</li>`).join('')}
+                    </ul>
+                </div>
+                <div class="recommendation">
+                    <h4>🏠 집에서 실천할 습관</h4>
+                    <ul>
+                        ${recommendation.habits.map(habit => `<li>${habit}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            document.getElementById('recommendation-content').innerHTML = resultContent;
+            document.getElementById('result').style.display = 'block';
+            
+            // 결과로 부드럽게 스크롤
+            document.getElementById('result').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    </script>
+</body>
+</html>
